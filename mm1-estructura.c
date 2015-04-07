@@ -21,7 +21,10 @@ float gen_next_interarrive(void);
 float gen_next_service_time(void);
 float  gen_next_depart(void);
 int next(float x, float y);
+void encolar(float tiempo_servicio, float tiempo_entrada);
+void desencolar(void);
 
+float sumatoria_tiempo_en_cola;
 float sim_time;
 float num_custs_delayed;
 
@@ -30,14 +33,14 @@ float total_of_delays;
 float area_num_in_q;
 float area_server_status;
 
-float queue[100];
+float queue[100] [2];
 float time_next_arrive;
 float time_next_depart;
 
 int next_event_type;
-int server_status;
-int num_in_q;
-float time_last_event;
+int server_status; /*--estado del/los servidor/es BUSY|IDLE--*/
+int num_in_q; /*--nuemero de clientes en cola--*/
+float time_last_event; /*--tiempo del ultimo evento--*/
 
 main()  /* Main function. */
 {
@@ -46,9 +49,10 @@ main()  /* Main function. */
     initialize();
 
     /* Run the simulation while more delays are still needed. */
-
-    while (num_custs_delayed < num_delays_required) {
-
+  
+    /*Num.clientes atendidos <  Num.clientes requeridos*/
+    while (num_custs_delayed < num_delays_required) { 
+       
         /* Determine the next event. */
         timing();
         /* Update time-average statistical accumulators. */
@@ -71,8 +75,7 @@ main()  /* Main function. */
     }
 
     /* Invoke the report generator and end the simulation. */
-
-    /* report();*/
+    report(); 
 
     return 0;
 }
@@ -82,6 +85,7 @@ void initialize(void)  /* Initialization function. */ /*--inicializacion de las 
 {
     /* Initialize the simulation clock. */
 
+    sumatoria_tiempo_en_cola = 0.0;
     sim_time = 0.0; /*--reloj de la simulacion--*/
     num_delays_required = 100;
 
@@ -106,7 +110,7 @@ void initialize(void)  /* Initialization function. */ /*--inicializacion de las 
 }
 
 
-void timing(void)  /* Timing function. */ /*--se fija el minimo entre el proximo tiempo de entrada y el proximo tiempo de salida--*/
+void timing(void)  /* Timing function. */ /*--Se fija el minimo entre el proximo tiempo de entrada y el proximo tiempo de salida--*/
 {
     int   i;
     float min_time_next_event = 1.0e+29;
@@ -114,7 +118,7 @@ void timing(void)  /* Timing function. */ /*--se fija el minimo entre el proximo
     next_event_type = 0; /* Al final debe quedar en 1 en caso de que el proximo evento sea un arribo, 2: si es la salida de un servicio */
 
     /* Determine the event type of the next event to occur. */
-/*    printf("La proxima entrada es %2f \n",time_next_event[1]);
+    /* printf("La proxima entrada es %2f \n",time_next_event[1]);
     printf("La proxima salida es %2f \n",time_next_event[2]);*/
 
     next_event_type = next(time_next_arrive,time_next_depart);
@@ -141,21 +145,12 @@ void arrive(void)  /* Arrival event function. */
     if (server_status == BUSY) {
 
         /* Server is busy, so increment number of customers in queue. */
-
-	    num_in_q = num_in_q + 1.0;
         /* Check to see whether an overflow condition exists. */
-
-        if (num_in_q > Q_LIMIT) {
-            exit(2); /* cuando no tengo mas lugar para encolar clientes termina la simulacion */
-        }else{
-            queue[num_in_q] = gen_next_service_time(); 
-        }
-
         /* Guardar el tiempo de arribo de esta entidad para los calculos estadisticos */ 
-	    /*es para calcular el tiempo que espero en cola*/
+        /*es para calcular el tiempo que espero en cola*/
 
+        encolar(gen_next_service_time(),sim_time);
     }
-
     else {
 
         /* Server libre, tener en  cuenta la entidad que pasa directamente al server para los calculos estadisticos */
@@ -188,15 +183,9 @@ void depart(void)  /* Departure event function. */
 
         /* Compute the delay of the customer who is beginning service and update
            the total delay accumulator. */
-
-
+        desencolar();     
         /* Increment the number of customers delayed, and schedule departure. */
-
-
-        time_next_depart = sim_time + queue[num_in_q];
-        num_in_q = num_in_q -1;
         num_custs_delayed = num_custs_delayed + 1;
-
     }
 }
 
@@ -204,12 +193,16 @@ void depart(void)  /* Departure event function. */
 void report(void)  /* Report generator function. */
 {
     /* Compute and write estimates of desired measures of performance. */
+    printf("*** Reporte de Estadisticos ****\n");
+    
+    /*Average delay in queue*/ 
+    printf("Demora Promedio en cola: %2f \n", sumatoria_tiempo_en_cola/num_custs_delayed);
 
-    /*\\Average delay in queue*/
+    /*Average number in queue*/ 
+    printf("Numero promedio en cola: \n" );
 
-    /*\\Average number in queue*/
-
-    /*\\Server utilization*/
+    /*Server utilization*/
+    printf("Utilizacion del servidor: \n");
 }
 
 
@@ -224,10 +217,7 @@ void update_time_avg_stats(void)  /* Update area accumulators for time-average s
 
     /* Update area under number-in-queue function. */
 
-
-
     /* Update area under server-busy indicator function. */
-
 }
 
 
@@ -243,7 +233,7 @@ float  gen_next_depart()
 
 float gen_next_service_time()
 {
-  return 2.0;
+  return 4.0;
 }
 
 int next(float x, float y)
@@ -254,4 +244,31 @@ int next(float x, float y)
     }else{
        return 2;
     }
+}
+
+void encolar (float tiempo_servicio, float tiempo_entrada)
+{
+   num_in_q = num_in_q + 1.0; 
+   if (num_in_q > Q_LIMIT) {
+            exit(2); /* cuando no tengo mas lugar para encolar clientes termina la simulacion */
+        }else{
+            queue[num_in_q][0]= gen_next_service_time();
+            queue[num_in_q][1]= sim_time;
+    } 
+}
+
+void desencolar (void)
+{
+    if (num_in_q > 0)
+    {
+        time_next_depart = sim_time + queue[1] [1];
+        sumatoria_tiempo_en_cola += (sim_time - queue[1][2]); /*Sumo el tiempo que estuvo en cola*/
+        int i;
+        for(i=0; i<num_in_q; i++)
+        {
+            queue[i][0]= queue[i+1][0];
+            queue[i][1]= queue[i+1][1];
+        }
+        num_in_q = num_in_q -1; 
+    }   
 }
