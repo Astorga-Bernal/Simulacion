@@ -65,10 +65,9 @@ main()  /* Main function. */
     initialize();
 
     /* Run the simulation while more delays are still needed. */
-  
-    /*Num.clientes atendidos <  Num.clientes requeridos*/
+
     while (num_custs_delayed < num_delays_required) { 
-       
+        
         /* Determine the next event. */
         timing();
         /* Update time-average statistical accumulators. */
@@ -86,7 +85,7 @@ main()  /* Main function. */
                 break;
         }
     }
-    /* Invoke the report generator and end the simulation. */
+    /* Invoke the report generator and end the simulation. */  
     report();
     return 0;
 }
@@ -227,7 +226,7 @@ void report(void)  /* Report generator function. */
     printf("Numero promedio cliente en sistema: %2f \n", sum_num_customers_in_system/sim_time );
 	
     /*Server utilization*/
-    printf("Utilizacion del servidor: %2f %\n", (area_server_status/sim_time)*100);
+    printf("Utilizacion del servidor: %2f \n", (area_server_status/sim_time)*100);
 }
 
 
@@ -257,21 +256,21 @@ float gen_next_interarrive()
     Aclaración: No fue posible realizar un switch por que no trabaja con tipo float.
     */
 	time_t tempo_segundos;
+    tempo_segundos = time ( NULL );
 
-	tempo_segundos = time ( NULL );
-   num_random = 0.0; /*inicialización de variable*/
-   num_random = lcgrand(1); /*generacion de random*/
+    num_random = 0.0; /*inicialización de variable*/
+    num_random = lcgrand(1); /*generacion de random*/
 
-   /*Casos segun tabla del Ejercicio 3 - Pract. 1*/
-   if( 0.0 <= num_random && num_random <= 0.2 ){return 15.0;}
-   else if( 0.2 < num_random && num_random <= 0.35){return 20.0;}
-   else if( 0.35 < num_random && num_random <= 0.55 ){return 25.0;}
-   else if (0.55 < num_random && num_random <= 0.7){return 30.0;}
-   else if(0.7 < num_random && num_random <= 1){return 35.0;}
-   else if (num_random > 1.0){
+    /*Casos segun tabla del Ejercicio 3 - Pract. 1*/
+    if( 0.0 <= num_random && num_random <= 0.2 ){return 15.0;}
+    else if( 0.2 < num_random && num_random <= 0.35){return 20.0;}
+    else if( 0.35 < num_random && num_random <= 0.55 ){return 25.0;}
+    else if (0.55 < num_random && num_random <= 0.7){return 30.0;}
+    else if(0.7 < num_random && num_random <= 1){return 35.0;}
+    else if (num_random > 1.0){
         exit(2); 
         printf("Error!, pues las probabilidades van de 0 a 1 \n");
-   }
+   }       
 }
 
 float gen_next_service_time()
@@ -279,18 +278,18 @@ float gen_next_service_time()
     /*
     Aclaración: No fue posible realizar un switch por que no trabaja con tipo float.
     */
-   num_random2 = 0.0; /*inicialización de variable*/
-   num_random2 = lcgrand(1); /*generacion de random*/
+    num_random2 = 0.0; /*inicialización de variable*/
+    num_random2 = lcgrand(1); /*generacion de random*/
 
-   /*Casos segun tabla del Ejercicio 3 - Pract. 1*/
-   if( 0.0 <= num_random2 && num_random2 <= 0.2 ){return 10.0;}
-   else if( 0.2 < num_random2 && num_random2 <= 0.55){return 15.0;}
-   else if( 0.55 < num_random2 && num_random2 <= 0.7){return 20.0;}
-   else if (0.7 < num_random2 && num_random2 <= 1.0){return 25.0;}
-   else if (num_random2 > 1.0){
+    /*Casos segun tabla del Ejercicio 3 - Pract. 1*/
+    if( 0.0 <= num_random2 && num_random2 <= 0.2 ){return 10.0;}
+    else if( 0.2 < num_random2 && num_random2 <= 0.55){return 15.0;}
+    else if( 0.55 < num_random2 && num_random2 <= 0.7){return 20.0;}
+    else if (0.7 < num_random2 && num_random2 <= 1.0){return 25.0;}
+    else if (num_random2 > 1.0){
         exit(2); 
         printf("Error!, pues las probabilidades van de 0 a 1 \n");
-   }
+    }
 }
 
 int min(float x, float y)
