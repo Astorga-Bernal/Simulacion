@@ -259,7 +259,7 @@ float gen_next_interarrive()
     tempo_segundos = time ( NULL );
 
     num_random = 0.0; /*inicialización de variable*/
-    num_random = lcgrand(1); /*generacion de random*/
+    num_random = lcgrand(1); /*generacion de random con stream 1*/
 
     /*Casos segun tabla del Ejercicio 3 - Pract. 1*/
     if( 0.0 <= num_random && num_random <= 0.2 ){return 15.0;}
@@ -270,7 +270,7 @@ float gen_next_interarrive()
     else if (num_random > 1.0){
         exit(2); 
         printf("Error!, pues las probabilidades van de 0 a 1 \n");
-   }       
+   }  
 }
 
 float gen_next_service_time()
