@@ -24,6 +24,7 @@ int next(float x, float y);
 void encolar(float tiempo_servicio, float tiempo_entrada);
 void desencolar(void);
 
+float num_random; /*variable utilizada para almacenar numero random*/
 float sumatoria_tiempo_en_cola;
 float sim_time;
 float num_custs_delayed;
@@ -33,7 +34,7 @@ float total_of_delays;
 float area_num_in_q;
 float area_server_status;
 
-float queue[100] [2];
+float queue[100][2];
 float time_next_arrive;
 float time_next_depart;
 
@@ -47,7 +48,7 @@ main()  /* Main function. */
 
     /* Initialize the simulation. */
     initialize();
-
+  
     /* Run the simulation while more delays are still needed. */
   
     /*Num.clientes atendidos <  Num.clientes requeridos*/
@@ -223,7 +224,41 @@ void update_time_avg_stats(void)  /* Update area accumulators for time-average s
 
 float gen_next_interarrive()  
 {
-  return 2.0;
+    /*
+    Descripcion: Cada vez que es invocada la funcion "gen_next_interarrive()"
+    me retorna como resultado un interarrivo dependiendo del num_ramdom generado.
+    Aclaración: No fue posible realizar un switch por que no trabaja con float 
+    */
+
+    num_random = 0.0; /*inicialización de variable*/
+    num_random = lcgrand(100); /*generacion de random*/
+
+    /* Chequeo de num_random */
+   if( 0 <= num_random && num_random <= 0.2 )
+   {
+        return 15.0;
+   }
+   else if( 0.2 < num_random && num_random <= 0.35)
+   {
+        return 20.0;
+   }
+   else if( 0.35 < num_random && num_random <= 0.55 )
+   {
+        return 25.0;
+   }
+   else if (0.55 < num_random && num_random <= 0.7)
+   {
+        return 30.0;
+   }
+   else if(0.7 < num_random && num_random <= 1)
+   {
+        return 35.0;
+   }
+   else if (num_random > 1)
+   {
+        exit(2); 
+        printf("Error!, pues las probabilidades van de 0 a 1 \n");
+   }
 }
 
 float  gen_next_depart()
