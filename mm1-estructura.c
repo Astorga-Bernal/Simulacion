@@ -25,6 +25,7 @@ void encolar(float tiempo_servicio, float tiempo_entrada);
 void desencolar(void);
 
 float num_random; /*variable utilizada para almacenar numero random*/
+float num_random2;
 float sumatoria_tiempo_en_cola;
 float sim_time;
 float num_custs_delayed;
@@ -268,7 +269,31 @@ float  gen_next_depart()
 
 float gen_next_service_time()
 {
-  return 4.0;
+   num_random2 = 0.0; /*inicialización de variable*/
+   num_random2 = lcgrand(1); /*generacion de random*/
+
+   /*Casos segun tabla del Ejercicio 3 - Pract. 1*/
+   if( 0.0 <= num_random2 && num_random2 <= 0.2 )
+   {
+        return 15.0;
+   }
+   else if( 0.2 < num_random2 && num_random2 <= 0.55)
+   {
+        return 20.0;
+   }
+   else if( 0.55 < num_random2 && num_random2 <= 0.7 )
+   {
+        return 25.0;
+   }
+   else if (0.7 < num_random2 && num_random2 <= 1.0)
+   {
+        return 30.0;
+   }
+   else if (num_random2 > 1.0)
+   {
+        exit(2); 
+        printf("Error!, pues las probabilidades van de 0 a 1 \n");
+   }
 }
 
 int next(float x, float y)
