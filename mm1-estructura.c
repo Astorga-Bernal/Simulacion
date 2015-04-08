@@ -48,7 +48,7 @@ main()  /* Main function. */
 
     /* Initialize the simulation. */
     initialize();
-  
+
     /* Run the simulation while more delays are still needed. */
   
     /*Num.clientes atendidos <  Num.clientes requeridos*/
@@ -226,15 +226,15 @@ float gen_next_interarrive()
 {
     /*
     Descripcion: Cada vez que es invocada la funcion "gen_next_interarrive()"
-    me retorna como resultado un interarrivo dependiendo del num_ramdom generado.
-    Aclaración: No fue posible realizar un switch por que no trabaja con float 
+    me retorna como resultado un interarrivo dependiendo del num_random generado.
+    Aclaración: No fue posible realizar un switch por que no trabaja con tipo float.
     */
 
-    num_random = 0.0; /*inicialización de variable*/
-    num_random = lcgrand(100); /*generacion de random*/
+   num_random = 0.0; /*inicialización de variable*/
+   num_random = lcgrand(1); /*generacion de random*/
 
-    /* Chequeo de num_random */
-   if( 0 <= num_random && num_random <= 0.2 )
+   /*Casos segun tabla del Ejercicio 3 - Pract. 1*/
+   if( 0.0 <= num_random && num_random <= 0.2 )
    {
         return 15.0;
    }
@@ -254,7 +254,7 @@ float gen_next_interarrive()
    {
         return 35.0;
    }
-   else if (num_random > 1)
+   else if (num_random > 1.0)
    {
         exit(2); 
         printf("Error!, pues las probabilidades van de 0 a 1 \n");
